@@ -3,6 +3,10 @@ source 'https://rubygems.org'
 # Specify your gem's dependencies in ruby_graph.gemspec
 gemspec
 
+# NOTE: 'activesupport' is required for some convenience:
+# esp.: extend objects for having methods like '0.present?' and
+# methods inside testing like eg. :assert_not_nil (does not exist otherwise)
+
 gem 'activesupport'
 gem 'guard'
 gem 'guard-minitest'
