@@ -4,6 +4,7 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'minitest', '~> 5.0'
+gem 'minitest-focus' # Focus on one test at a time by adding 'focus' above the test.
 gem 'pry'
 gem 'pry-alias'
 gem 'pry-byebug'

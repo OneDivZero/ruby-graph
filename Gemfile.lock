@@ -15,6 +15,8 @@ GEM
     interception (0.5)
     method_source (1.0.0)
     minitest (5.14.2)
+    minitest-focus (1.2.1)
+      minitest (>= 4, < 6)
     parallel (1.20.1)
     parser (2.7.2.0)
       ast (~> 2.4.1)
@@ -56,6 +58,7 @@ PLATFORMS
 
 DEPENDENCIES
   minitest (~> 5.0)
+  minitest-focus
   pry
   pry-alias
   pry-byebug
