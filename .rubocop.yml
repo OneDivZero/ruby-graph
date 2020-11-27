@@ -1,0 +1,105 @@
+AllCops:
+  TargetRubyVersion: 2.6
+  Exclude:
+    - 'bin/*'
+    - 'builds/**/*'
+    - 'config/**/*'
+    - 'db/**/*'
+    - 'gems/**/*'
+    - 'node_modules/**/*'
+    - 'script/**/*'
+    - 'vendor/**/*'
+    - '**/bin/*'
+    - '**/Capfile'
+    - '**/Guardfile'
+
+# Avoid 'Missing top-level class documentation comment'
+Documentation:
+  Enabled: false
+
+Layout/IndentationWidth:
+  Width: 2
+
+Layout/LeadingCommentSpace:
+  Enabled: false
+
+Layout/LineLength:
+  Max: 120
+  Exclude:
+    - 'test/**/*.rb'
+
+# The ABC size is a calculated magnitude, so this number can be a Fixnum or a Float (default 15)
+Metrics/AbcSize:
+  Exclude:
+    - 'test/factories/**/*.rb'
+    - 'test/support/**/*.rb'
+
+Metrics/BlockLength:
+  Exclude:
+    - '**/*.rake'
+    - 'test/factories/*.rb'
+    - 'test/**/*.rb'
+    - Gemfile
+
+Metrics/ClassLength:
+  Enabled: true
+  Exclude:
+    - '**/*_spec.rb'
+    - '**/*.rake'
+    - 'test/factories/*.rb'
+    - 'test/**/*.rb'
+
+Metrics/MethodLength:
+  CountComments: false # count full line comments?
+  Exclude:
+    - 'test/factories/**/*.rb'
+    - 'test/support/*.rb'
+    - 'test/**/*.rb'
+
+Metrics/ModuleLength:
+  Enabled: true
+  Exclude:
+    - spec/**/*
+    - test/**/*
+    - "**/*.rake"
+
+Naming/MemoizedInstanceVariableName:
+  Enabled: false
+
+Naming/MethodParameterName:
+  Enabled: false
+
+# Allow methods starting with 'has_'
+Naming/PredicateName:
+  Enabled: false
+
+# Allow inline declaration 'private def bar; end'
+Style/AccessModifierDeclarations:
+  EnforcedStyle: inline
+
+# Allow code-style 'my_condtion and return true'
+Style/AndOr:
+  EnforcedStyle: conditionals
+
+Style/BlockDelimiters:
+  Exclude:
+    - 'test/factories/*.rb'
+    - 'lib/tasks/**/*.rake'
+
+Style/ClassAndModuleChildren:
+  Exclude:
+    - test/**/*.rb
+
+# Should be deprecated in newer Rails-versions # https://bugs.ruby-lang.org/issues/11473#note-53
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/RegexpLiteral:
+  Enabled: false
+
+Style/Semicolon:
+  AllowAsExpressionSeparator: true
+
+Style/SymbolArray:
+  Exclude:
+    - 'test/factories/*.rb'
