@@ -9,7 +9,7 @@ require 'ruby_graph'
 
 require 'active_support'
 require 'pry'
-#require 'pry/alias'
+require 'pry-alias'
 
 require 'minitest/autorun'
 require 'minitest/focus'
