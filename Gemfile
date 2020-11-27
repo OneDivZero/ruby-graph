@@ -3,6 +3,7 @@ source 'https://rubygems.org'
 # Specify your gem's dependencies in ruby_graph.gemspec
 gemspec
 
+gem 'activesupport'
 gem 'guard'
 gem 'guard-minitest'
 gem 'minitest', '~> 5.0'
