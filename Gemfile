@@ -4,5 +4,10 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'minitest', '~> 5.0'
+gem 'pry'
+gem 'pry-alias'
+gem 'pry-byebug'
+gem 'pry-rescue'
+gem 'pry-stack_explorer'
 gem 'rake', '~> 12.0'
 gem 'rubocop'
