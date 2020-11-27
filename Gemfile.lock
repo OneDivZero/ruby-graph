@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ruby_graph (0.1.0)
+    ruby_graph (0.1.0.pre.alpha)
 
 GEM
   remote: https://rubygems.org/
