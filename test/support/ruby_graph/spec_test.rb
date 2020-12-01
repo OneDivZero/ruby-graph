@@ -1,5 +1,9 @@
-module Minitest
-  class AdvancedSpec < Minitest::Spec
+require 'support/ruby_graph/test_methods'
+
+module RubyGraph
+  class SpecTest < Minitest::Spec
+    include RubyGraph::TestMethods
+
     alias :assert_raise :assert_raises
     alias :assert_not_empty :refute_empty
     alias :assert_not_equal :refute_equal

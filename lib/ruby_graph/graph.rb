@@ -40,10 +40,10 @@ module RubyGraph
       return true unless to.present?
       return false unless node?(to)
 
-      add(to)
       connect(name, to)
     end
 
+    # Connects to nodes
     def connect(source, target)
       source = node_key_for(source)
       target = node_key_for(target)

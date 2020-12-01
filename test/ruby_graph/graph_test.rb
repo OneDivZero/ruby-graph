@@ -1,10 +1,6 @@
 require 'test_helper'
 
-class RubyGraph::GraphTest < Minitest::AdvancedSpec
-  def build_graph(name: nil)
-    @graph = RubyGraph::Graph.build(name: name)
-  end
-
+class RubyGraph::GraphTest < RubyGraph::SpecTest
   describe 'Graph' do
     it 'has a name by default' do
       build_graph
@@ -28,86 +24,87 @@ class RubyGraph::GraphTest < Minitest::AdvancedSpec
   end
 
   describe 'Adding nodes' do
-    it 'responds if a node is unknown' do
-      assert true
+    it 'adds a node and accepts a symbol or string or number as name' do
+      build_graph
+
+      [:a, 'b', 123].each do |name|
+        @graph.add(name)
+
+        assert @graph.storage.key?(name.to_s.to_sym)
+      end
+    end
+
+    it 'adds a node and connects it with an existing node' do
+      build_graph
+
+      assert_not @graph.add(:a, to: :b)
+
+      @graph.add(:b)
+
+      assert @graph.add(:a, to: :b)
     end
   end
 
-  # test 'it adds a node and accepts a symbol or string or number as name' do
-  #   build_graph
+  describe 'Handling nodes' do
+    it 'responds if a node is known' do
+      build_graph
+      @graph.add(:a)
 
-  #   [:a, 'b', 123].each do |name|
-  #     @graph.add(name)
+      assert @graph.node?(:a)
+      assert_not @graph.node?(:unknown)
+    end
 
-  #     assert @graph.storage.key?(name.to_s.to_sym)
-  #   end
-  # end
+    it 'returns a node-definition if the node exists' do
+      build_graph
+      @graph.add(:a)
 
-  # test 'it adds a node and connects it with an existing node' do
-  #   build_graph
+      assert @graph.node(:a)
+      assert_equal [], @graph.node(:a)
+      assert_nil @graph.node(:unknown)
+    end
+  end
 
-  #   assert_not @graph.add(:a, to: :b)
+  describe 'Connecting nodes' do
+    it 'can connect a node with itself' do
+      build_graph
+      @graph.add(:a)
 
-  #   @graph.add(:b)
+      assert @graph.connect(:a, :a)
+      assert_equal [:a], @graph.storage[:a]
+    end
 
-  #   assert @graph.add(:a, to: :b)
-  # end
+    it 'can connect two nodes' do
+      build_graph
+      @graph.add(:a)
+      @graph.add(:b)
 
-  # test 'responds if a node is known' do
-  #   build_graph
-  #   @graph.add(:a)
+      assert @graph.connect(:a, :b)
 
-  #   assert @graph.node?(:a)
-  #   assert_not @graph.node?(:unknown)
-  # end
+      assert_equal [:b], @graph.storage[:a]
+      assert_equal [:a], @graph.storage[:b]
 
-  # test 'it returns a node-definition if the node is known' do
-  #   build_graph
-  #   @graph.add(:a)
+      assert_not @graph.connect(:a, :c)
+    end
+  end
 
-  #   assert @graph.node(:a)
-  #   assert_equal [], @graph.node(:a)
-  #   assert_nil @graph.node(:unknown)
-  # end
+  describe 'Neighbors of nodes' do
+    it 'returns direct neighbors' do
+      build_graph
+      @graph.add(:a)
+      @graph.add(:b)
+      @graph.add(:c)
 
-  # test 'it can connect two nodes' do
-  #   build_graph
-  #   @graph.add(:a)
-  #   @graph.add(:b)
+      assert_empty [], @graph.neighbors(:a)
 
-  #   assert @graph.connect(:a, :b)
+      @graph.connect(:a, :b)
 
-  #   assert_equal [:b], @graph.storage[:a]
-  #   assert_equal [:a], @graph.storage[:b]
+      assert_equal [:b], @graph.neighbors(:a)
 
-  #   assert_not @graph.connect(:a, :c)
-  # end
+      @graph.connect(:a, :c)
 
-  # test 'it can connect a node with itself' do
-  #   build_graph
-  #   @graph.add(:a)
-
-  #   assert @graph.connect(:a, :a)
-  #   assert_equal [:a], @graph.storage[:a]
-  # end
-
-  # test 'neighbors' do
-  #   build_graph
-  #   @graph.add(:a)
-  #   @graph.add(:b)
-  #   @graph.add(:c)
-
-  #   assert_empty [], @graph.neighbors(:a)
-
-  #   @graph.connect(:a, :b)
-
-  #   assert_equal [:b], @graph.neighbors(:a)
-
-  #   @graph.connect(:a, :c)
-
-  #   assert_equal [:b, :c], @graph.neighbors(:a)
-  #   assert_equal [:a], @graph.neighbors(:b)
-  #   assert_equal [:a], @graph.neighbors(:c)
-  # end
+      assert_equal %i[b c], @graph.neighbors(:a)
+      assert_equal [:a], @graph.neighbors(:b)
+      assert_equal [:a], @graph.neighbors(:c)
+    end
+  end
 end
-#end
