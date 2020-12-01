@@ -12,6 +12,9 @@ gem 'guard'
 gem 'guard-minitest'
 gem 'minitest', '~> 5.0'
 gem 'minitest-focus' # Focus on one test at a time by adding 'focus' above the test.
+# DNW: `test': unknown command 'i' (ArgumentError) # when running with: 'bundle exec guard -i'
+#gem 'minitest-rails'
+#gem 'minitest-spec-rails' # Drops in Minitest::Spec superclass for ActiveSupport::TestCase
 gem 'pry'
 gem 'pry-alias'
 gem 'pry-byebug'

@@ -12,7 +12,9 @@ require 'pry'
 require 'pry-alias'
 
 require 'minitest/autorun'
+require 'minitest/pride'
 require 'minitest/focus'
+#require 'minitest/spec'
 
 INCLUDED_TEST_DIRS.each do |folder|
   file_list_pattern = [GEM_FILE_PATH, 'test', folder, '**', '*.rb'].join('/')
