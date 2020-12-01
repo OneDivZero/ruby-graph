@@ -1,8 +1,12 @@
 require 'test_helper'
 
 class RubyGraph::GraphTest < RubyGraph::SpecTest
-  describe 'Graph' do
-    it 'has a name by default' do
+  describe 'Building a graph' do
+    it 'builds a graph when using the test-helper-method :build_graph' do
+      assert_instance_of RubyGraph::Graph, build_graph
+    end
+
+    it 'has a name (defaults to object_id)' do
       build_graph
 
       assert_not_nil @graph.name
