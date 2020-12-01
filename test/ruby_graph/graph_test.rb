@@ -1,13 +1,6 @@
 require 'test_helper'
 
-# NOTE: We use :active_support instead of using plain minitest (=> 'class RubyGraph::GraphTest < Minitest::Test')
-# Just because it provides more painless testing-capabilities. (MiniTest needs to become a bit more powerfull!)
-
-#class RubyGraph::GraphTest < ActiveSupport::TestCase
-#class RubyGraph::GraphTest < Minitest::Test
-#describe 'RubyGraph' do
-
-class RubyGraph::GraphTest < Minitest::Spec
+class RubyGraph::GraphTest < Minitest::AdvancedSpec
   def build_graph(name: nil)
     @graph = RubyGraph::Graph.build(name: name)
   end
@@ -16,16 +9,14 @@ class RubyGraph::GraphTest < Minitest::Spec
     it 'has a name by default' do
       build_graph
 
-      #assert_not_nil @graph.name
-      refute_nil @graph.name
+      assert_not_nil @graph.name
       assert_equal @graph.object_id, @graph.name
     end
 
     it 'accepts a custom name' do
       build_graph(name: :custom)
 
-      #assert_not_nil @graph.name
-      refute_nil @graph.name
+      assert_not_nil @graph.name
       assert_equal :custom, @graph.name
     end
 
