@@ -56,12 +56,10 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
 
   describe 'Handling nodes' do
     it 'returns all nodes' do
-      build_graph
-      @graph.add(:a)
-      @graph.add(:b)
-      @graph.add(:c)
+      nodes = %i[a b c]
+      build_graph(with: nodes)
 
-      assert_equal %i[a b c], @graph.nodes
+      assert_equal nodes, @graph.nodes
     end
 
     it 'responds if a node is known' do
@@ -92,9 +90,7 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
     end
 
     it 'can connect two nodes' do
-      build_graph
-      @graph.add(:a)
-      @graph.add(:b)
+      build_graph(with: %i[a b])
 
       assert @graph.connect(:a, :b)
 
@@ -107,10 +103,7 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
 
   describe 'Neighborship of nodes' do
     it 'returns direct neighbors' do
-      build_graph
-      @graph.add(:a)
-      @graph.add(:b)
-      @graph.add(:c)
+      build_graph(with: %i[a b c])
 
       assert_empty [], @graph.neighbors(:a)
 
@@ -126,9 +119,7 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
     end
 
     it 'responds if two nodes are adjacent' do
-      build_graph
-      @graph.add(:a)
-      @graph.add(:b)
+      build_graph(with: %i[a b])
 
       @graph.connect(:a, :b)
 
@@ -137,8 +128,7 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
     end
 
     it 'responds if a node is adjacent with itself' do
-      build_graph
-      @graph.add(:a)
+      build_graph(with: %i[a])
 
       @graph.connect(:a, :a)
 
@@ -163,9 +153,8 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
     end
 
     it 'returns an edge if a node is connected with itself' do
-      build_graph
+      build_graph(with: %i[a])
 
-      @graph.add(:a)
       @graph.connect(:a, :a)
 
       assert_equal [%i[a a]], @graph.edges
