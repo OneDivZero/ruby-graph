@@ -21,6 +21,15 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
 
       assert @graph.empty?
     end
+
+    it 'builds a graph with an inital setting of nodes' do
+      nodes = %i[a b c]
+      build_graph(with: nodes)
+
+      nodes.each do |name|
+        assert @graph.store.key?(name)
+      end
+    end
   end
 
   describe 'Adding nodes' do

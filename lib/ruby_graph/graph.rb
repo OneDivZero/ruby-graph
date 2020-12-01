@@ -2,13 +2,15 @@ module RubyGraph
   class Graph
     attr_reader :name, :store
 
-    def self.build(name: nil)
-      new(name)
+    def self.build(name: nil, with: [])
+      new(name, with: with)
     end
 
-    def initialize(name = nil)
+    def initialize(name = nil, with: [])
       @name = name || object_id
       @store = {}
+
+      with.each { |name| add(name) } if with.any?
     end
 
     # Returns true if graph has no nodes
