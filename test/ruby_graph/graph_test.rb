@@ -30,7 +30,7 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
       [:a, 'b', 123].each do |name|
         @graph.add(name)
 
-        assert @graph.storage.key?(name.to_s.to_sym)
+        assert @graph.store.key?(name.to_s.to_sym)
       end
     end
 
@@ -79,7 +79,7 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
       @graph.add(:a)
 
       assert @graph.connect(:a, :a)
-      assert_equal [:a], @graph.storage[:a]
+      assert_equal [:a], @graph.store[:a]
     end
 
     it 'can connect two nodes' do
@@ -89,8 +89,8 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
 
       assert @graph.connect(:a, :b)
 
-      assert_equal [:b], @graph.storage[:a]
-      assert_equal [:a], @graph.storage[:b]
+      assert_equal [:b], @graph.store[:a]
+      assert_equal [:a], @graph.store[:b]
 
       assert_not @graph.connect(:a, :c)
     end

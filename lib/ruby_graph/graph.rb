@@ -1,6 +1,6 @@
 module RubyGraph
   class Graph
-    attr_reader :name, :storage
+    attr_reader :name, :store
 
     def self.build(name: nil)
       new(name)
@@ -8,27 +8,27 @@ module RubyGraph
 
     def initialize(name = nil)
       @name = name || object_id
-      @storage = {}
+      @store = {}
     end
 
     # Returns true if graph has no nodes
     def empty?
-      @storage.empty?
+      @store.empty?
     end
 
     # Responds if a node is known
     def node?(name)
-      @storage.key?(node_key_for(name))
+      @store.key?(node_key_for(name))
     end
 
     # Returns the node-definition
     # Currently the same as :neighbors
     def node(name)
-      @storage[node_key_for(name)]
+      @store[node_key_for(name)]
     end
 
     def nodes
-      @storage.keys
+      @store.keys
     end
 
     # [%i[a b], %i[a c]]
@@ -36,7 +36,7 @@ module RubyGraph
       result = []
       return result if empty?
 
-      @storage.each do |node, neighbors|
+      @store.each do |node, neighbors|
         neighbors.each do |neighbor|
           result << [node, neighbor].sort
         end
@@ -47,7 +47,7 @@ module RubyGraph
 
     # Returns all neighbors of a node
     def neighbors(name)
-      @storage[node_key_for(name)]
+      @store[node_key_for(name)]
     end
 
     # Responds if two nodes are directly connected (via one edge)
@@ -75,13 +75,13 @@ module RubyGraph
       return false unless node?(source)
       return false unless node?(target)
 
-      @storage[source] << target
-      @storage[target] << source unless source.eql?(target)
+      @store[source] << target
+      @store[target] << source unless source.eql?(target)
       true
     end
 
     private def add_node(name)
-      @storage[node_key_for(name)] = []
+      @store[node_key_for(name)] = []
     end
 
     private def node_key_for(name)
