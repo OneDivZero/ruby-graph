@@ -164,4 +164,34 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
       assert_equal [%i[a a]], @graph.edges
     end
   end
+
+  describe 'Removing nodes' do
+    it 'fails when removing an unknown node' do
+      build_graph(with: %i[a])
+
+      assert_not @graph.remove(:unknown)
+    end
+
+    it 'removes a nodes' do
+      build_graph(with: %i[a])
+
+      assert @graph.remove(:a)
+      assert_not @graph.store.key?(:a)
+    end
+
+    it 'removes all edges too' do
+      build_graph(with: %i[a b c])
+
+      @graph.connect(:a, :b)
+      @graph.connect(:a, :c)
+
+      assert @graph.remove(:a)
+      assert_empty @graph.neighbors(:b)
+      assert_empty @graph.neighbors(:c)
+
+      expected = { b: [], c: [] }
+
+      assert_equal expected, @graph.store
+    end
+  end
 end

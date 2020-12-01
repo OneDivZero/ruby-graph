@@ -71,6 +71,17 @@ module RubyGraph
       connect(name, to)
     end
 
+    # Removes a node including all edges to neighbors
+    def remove(name)
+      return false unless node?(name)
+
+      neighbors(name).each do |neighbor|
+        node(neighbor).delete(name)
+      end
+
+      @store.delete(:a)
+    end
+
     # Connects to nodes
     def connect(source, target)
       source = key_for(source)
