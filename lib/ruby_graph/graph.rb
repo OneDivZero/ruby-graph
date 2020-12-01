@@ -1,3 +1,5 @@
+# RubyGraph::Graph provides a simple graph-datastructure with a hash-based store.
+# As of yet, it only supports undirected graphs and has a very simple, cost-inefficient underlying datastructure.
 module RubyGraph
   class Graph
     attr_reader :name, :store
@@ -20,20 +22,20 @@ module RubyGraph
 
     # Responds if a node is known
     def node?(name)
-      @store.key?(node_key_for(name))
+      @store.key?(key_for(name))
     end
 
     # Returns the node-definition
     # Currently the same as :neighbors
     def node(name)
-      @store[node_key_for(name)]
+      @store[key_for(name)]
     end
 
     def nodes
       @store.keys
     end
 
-    # [%i[a b], %i[a c]]
+    # Returns all edges
     def edges
       result = []
       return result if empty?
@@ -49,7 +51,7 @@ module RubyGraph
 
     # Returns all neighbors of a node
     def neighbors(name)
-      @store[node_key_for(name)]
+      @store[key_for(name)]
     end
 
     # Responds if two nodes are directly connected (via one edge)
@@ -59,7 +61,7 @@ module RubyGraph
 
     # Adds a new node to graph, unless it already exists
     # Connects it to another node, if a target named :to is present
-    # DOCME: integers with a leading zero like phone-numbers will always be converted by ruby, e.g. 0221 => 145
+    # TODO: DOCME: integers with a leading zero like phone-numbers will always be converted by ruby, e.g. 0221 => 145
     def add(name, to: nil)
       add_node(name) unless node?(name)
 
@@ -71,8 +73,8 @@ module RubyGraph
 
     # Connects to nodes
     def connect(source, target)
-      source = node_key_for(source)
-      target = node_key_for(target)
+      source = key_for(source)
+      target = key_for(target)
 
       return false unless node?(source)
       return false unless node?(target)
@@ -83,10 +85,11 @@ module RubyGraph
     end
 
     private def add_node(name)
-      @store[node_key_for(name)] = []
+      @store[key_for(name)] = []
     end
 
-    private def node_key_for(name)
+    private def key_for(name)
+      #name.is_a?(Integer) ? ('0%o' % name).to_sym : name.to_s.to_sym
       name.to_s.to_sym
     end
   end
