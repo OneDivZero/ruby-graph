@@ -11,6 +11,7 @@ module RubyGraph
       @storage = {}
     end
 
+    # Returns true if graph has no nodes
     def empty?
       @storage.empty?
     end
@@ -26,9 +27,32 @@ module RubyGraph
       @storage[node_key_for(name)]
     end
 
-    # Returns the neighbors of a node
+    def nodes
+      @storage.keys
+    end
+
+    # [%i[a b], %i[a c]]
+    def edges
+      result = []
+      return result if empty?
+
+      @storage.each do |node, neighbors|
+        neighbors.each do |neighbor|
+          result << [node, neighbor].sort
+        end
+      end
+
+      result.uniq
+    end
+
+    # Returns all neighbors of a node
     def neighbors(name)
       @storage[node_key_for(name)]
+    end
+
+    # Responds if two nodes are directly connected (via one edge)
+    def adjacent?(source, target)
+      neighbors(source).include?(target)
     end
 
     # Adds a new node to graph, unless it already exists
