@@ -1,12 +1,14 @@
 require 'test_helper'
 
 class RubyGraph::GraphTest < RubyGraph::SpecTest
+  UNACCEPTABLE_DATA_TYPES = [Array, Hash, Object].freeze
+
   describe 'Building a graph' do
     it 'builds a graph when using the test-helper-method :build_graph' do
       assert_instance_of RubyGraph::Graph, build_graph
     end
 
-    it 'has a name (defaults to object_id)' do
+    it 'has always a name (defaults to object_id)' do
       build_graph
 
       assert_not_nil @graph.name
@@ -26,7 +28,7 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
       assert @graph.empty?
     end
 
-    it 'builds a graph with an inital setting of nodes' do
+    it 'builds a graph with an initial defined setting of nodes' do
       nodes = %i[a b c]
       build_graph(with: nodes)
 
@@ -34,10 +36,25 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
         assert @graph.store.key?(name)
       end
     end
+
+    it 'allows reading-access to internal data-structure' do
+      build_graph
+
+      assert_respond_to @graph, :store
+      assert_not_respond_to @graph, :'store='
+    end
   end
 
   describe 'Adding nodes' do
-    it 'adds a node and accepts a symbol or string or number as name' do
+    it 'adds a node' do
+      build_graph
+
+      @graph.add(:a)
+
+      assert @graph.store.key?(:a)
+    end
+
+    it 'accepts a symbol or a string or a number as node-name' do
       build_graph
 
       [:a, 'b', 123].each do |name|
@@ -45,6 +62,24 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
 
         assert @graph.store.key?(name.to_s.to_sym)
       end
+    end
+
+    it 'does not accept a number with an leading zero' do
+      build_graph
+
+      @graph.add(0221)
+
+      assert_not @graph.store.key?(:'0221')
+    end
+
+    it 'does not accept a number with an leading zero but it adds the node using the octal representation' do
+      build_graph
+
+      @graph.add(0221)
+
+      expected = 0221.to_s.to_sym
+
+      assert @graph.store.key?(:'145')
     end
 
     it 'adds a node and connects it with an existing node' do
@@ -192,6 +227,75 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
       expected = { b: [], c: [] }
 
       assert_equal expected, @graph.store
+    end
+  end
+
+  # TODO: We should test every method, which accesses / should / must access private method :key_for in graph-class
+  describe 'Failing hard for nonconforming node-names' do
+    # TODO: aggregate all access-methods here and use a methods named :fails_when or :fails_for substituting :it
+    # e.g. fails_for '#adjacent?' do ... end
+
+    it 'does not fail for internal method :key_for when using a symbol, string or an integer' do
+      RubyGraph::Graph.send :public, :key_for
+
+      build_graph
+
+      assert_respond_to @graph, :key_for
+      assert_equal :a, @graph.key_for(:a)
+      assert_equal 'a'.to_sym, @graph.key_for('a')
+      assert_equal :'123', @graph.key_for(123)
+    end
+
+    # TODO: Is this maybe a case for mutant-testing ?! We can not do a test for every existing class :D
+    it 'fails for internal method :key_for when using an arbitrary data-type' do
+      RubyGraph::Graph.send :public, :key_for
+
+      build_graph
+
+      assert_respond_to @graph, :key_for
+
+      UNACCEPTABLE_DATA_TYPES.each do |class_name|
+        assert_raises(RubyGraph::Graph::InvalidNode) { @graph.key_for(class_name.new) }
+      end
+    end
+
+    it 'fails for #node' do
+      build_graph
+
+      assert_raises(RubyGraph::Graph::InvalidNode) { @graph.node([]) }
+    end
+
+    it 'fails for #node?' do
+      build_graph
+
+      assert_raises(RubyGraph::Graph::InvalidNode) { @graph.node?([]) }
+    end
+
+    it 'fails for #adjacent?' do
+      build_graph
+
+      assert_raises(RubyGraph::Graph::InvalidNode) { @graph.adjacent?([], :b) }
+      assert_raises(RubyGraph::Graph::InvalidNode) { @graph.adjacent?(:a, []) }
+    end
+
+    it 'fails for incident?' do
+      build_graph
+
+      assert_raises(RubyGraph::Graph::InvalidNode) { @graph.incident?([], [:a, :b]) }
+    end
+  end
+
+  describe 'Failing hard for nonconforming edge-definitions' do
+    it 'fails for incident?' do
+      build_graph
+
+      assert_raises(RubyGraph::Graph::InvalidEdge) { @graph.incident?(:a, []) }
+      assert_raises(RubyGraph::Graph::InvalidEdge) { @graph.incident?(:a, [:a]) }
+      assert_raises(RubyGraph::Graph::InvalidEdge) { @graph.incident?(:a, [{}]) }
+
+      UNACCEPTABLE_DATA_TYPES.each do |class_name|
+        assert_raises(RubyGraph::Graph::InvalidEdge) { @graph.incident?(:a, [class_name.new]) }
+      end
     end
   end
 end
