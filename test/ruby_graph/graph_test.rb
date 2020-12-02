@@ -101,7 +101,7 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
       assert_equal nodes, @graph.nodes
     end
 
-    it 'responds if a node is known' do
+    it 'ensures if a node is known' do
       build_graph
       @graph.add(:a)
 
@@ -116,6 +116,18 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
       assert @graph.node(:a)
       assert_equal [], @graph.node(:a)
       assert_nil @graph.node(:unknown)
+    end
+
+    it 'ensures if a list of nodes is known' do
+      nodes = %i[a b]
+      build_graph(with: nodes)
+
+      assert @graph.known?(:a)
+      assert @graph.known?(:a, :b)
+      assert @graph.known?(*nodes)
+
+      assert_not @graph.known?(:c)
+      assert_not @graph.known?(:c, :d)
     end
   end
 
@@ -140,7 +152,7 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
     end
   end
 
-  describe 'Neighborship of nodes' do
+  describe 'Adjacence of nodes' do
     it 'returns direct neighbors' do
       build_graph(with: %i[a b c])
 
@@ -157,7 +169,7 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
       assert_equal [:a], @graph.neighbors(:c)
     end
 
-    it 'responds if two nodes are adjacent' do
+    it 'ensures if two nodes are adjacent' do
       build_graph(with: %i[a b])
 
       @graph.connect(:a, :b)
@@ -166,12 +178,44 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
       assert @graph.adjacent?(:b, :a)
     end
 
-    it 'responds if a node is adjacent with itself' do
+    it 'ensures if a node is adjacent with itself' do
       build_graph(with: %i[a])
 
       @graph.connect(:a, :a)
 
       assert @graph.adjacent?(:a, :a)
+    end
+  end
+
+  describe 'Incidence of nodes' do
+    it 'ensures if a node is incident with a given edge-definition' do
+      build_graph(with: %i[a b])
+
+      @graph.connect(:a, :b)
+
+      assert @graph.incident?(:a, %i[a b])
+    end
+
+    it 'fails if the node is not incident' do
+      build_graph(with: %i[a b])
+
+      assert_not @graph.incident?(:a, %i[a b])
+    end
+
+    it 'fails if the node is unknown' do
+      build_graph(with: %i[a b])
+
+      @graph.connect(:a, :b)
+
+      assert_not @graph.incident?(:c, %i[a b])
+    end
+
+    it 'fails if the node is not part of the edge-definition' do
+      build_graph(with: %i[a b])
+
+      @graph.connect(:a, :b)
+
+      assert_not @graph.incident?(:a, %i[a c])
     end
   end
 
@@ -230,6 +274,17 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
     end
   end
 
+  # TODO: Move tests concerning 'when using internal method :key_for'
+  # describe 'Failing hard when using internal method :key_for' do
+  #   before_each do
+  #     RubyGraph::Graph.send :public, :key_for
+
+  #     build_graph
+
+  #     assert_respond_to @graph, :key_for
+  #   end
+  # end
+
   # TODO: We should test every method, which accesses / should / must access private method :key_for in graph-class
   describe 'Failing hard for nonconforming node-names' do
     # TODO: aggregate all access-methods here and use a methods named :fails_when or :fails_for substituting :it
@@ -241,9 +296,20 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
       build_graph
 
       assert_respond_to @graph, :key_for
+
       assert_equal :a, @graph.key_for(:a)
       assert_equal 'a'.to_sym, @graph.key_for('a')
       assert_equal :'123', @graph.key_for(123)
+    end
+
+    it 'fails for internal method :key_for if node-name is nil' do
+      RubyGraph::Graph.send :public, :key_for
+
+      build_graph
+
+      assert_respond_to @graph, :key_for
+
+      assert_raises(RubyGraph::Graph::InvalidNode) { @graph.key_for(nil) }
     end
 
     # TODO: Is this maybe a case for mutant-testing ?! We can not do a test for every existing class :D
@@ -291,7 +357,6 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
 
       assert_raises(RubyGraph::Graph::InvalidEdge) { @graph.incident?(:a, []) }
       assert_raises(RubyGraph::Graph::InvalidEdge) { @graph.incident?(:a, [:a]) }
-      assert_raises(RubyGraph::Graph::InvalidEdge) { @graph.incident?(:a, [{}]) }
 
       UNACCEPTABLE_DATA_TYPES.each do |class_name|
         assert_raises(RubyGraph::Graph::InvalidEdge) { @graph.incident?(:a, [class_name.new]) }

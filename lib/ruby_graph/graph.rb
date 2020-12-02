@@ -4,6 +4,7 @@ module RubyGraph
   class Graph
     class InvalidNode < StandardError; end
     class InvalidEdge < StandardError; end
+    # class InvalidSet < StandardError; end
 
     attr_reader :name, :store
 
@@ -24,7 +25,7 @@ module RubyGraph
       @store.empty?
     end
 
-    # Responds if a node is known
+    # Evaluates if a node is known
     def node?(name)
       @store.key?(key_for(name))
     end
@@ -58,7 +59,7 @@ module RubyGraph
       @store[key_for(name)]
     end
 
-    # Responds if two nodes are directly connected (via one edge)
+    # Evaluates if two nodes are directly connected (via one edge)
     def adjacent?(source, target)
       source = key_for(source)
       target = key_for(target)
@@ -66,9 +67,19 @@ module RubyGraph
       neighbors(source).include?(target)
     end
 
-    # Responds if a given node is incident with a given edge (a pair of two nodes)
+    # Evaluates if given node-list is known
+    def known?(*nodes)
+      # raise InvalidSet unless nodes.is_a?(Array)
+
+      nodes.reduce(true) { |result, name| result && node?(name) }
+    end
+
+    # Evaluates if a given node is incident with a given edge (a pair of two nodes)
     # ein Knoten ist inzident mit einer Kante: der Knoten liegt an wenigstens einem Ende der Kante
     # eine Kante ist inzident mit einem Knoten: die Kante hat den Knoten an einem ihrer Enden
+    # An incidence is given, if and only if the given :node exists and *all defined :nodes* from edge-definition exists
+    # One :node is incident with an :edge, if the :node has a direct connection to another :node specified by :edge
+    # One :edge is incident with a :node, if a :node specified by :edge has a direct connection to given :node
     def incident?(node, edge)
       node = key_for(node)
       edge = keyify(edge)
@@ -76,20 +87,15 @@ module RubyGraph
       raise InvalidEdge unless valid_edge?(edge)
 
       return false unless node?(node) # Not possible if node is unknown
-      return false unless edge.include?(node) # Not possible, if edge-definition does not contain node
+      #return false unless edge.include?(node)
+      return false unless known?(*edge) # Not possible, if edge-definition does not contain specified nodes
 
-      #other_node = edge.without(node) # FIXME: undefined method `without' for [:a, :b]:Array"
+      #other_node = edge.without(node) # FIXME: undefined method `without' for [:a, :b]:Array" #ActiveSupport #1
       edge.delete(node)
       other_node = edge.first
 
       neighbors(node).include?(other_node)
     end
-
-    # def incident?(node_or_edge)
-    #   return neighbors(node_or_edge.first).include?(node_or_edge.last) if node_or_edge.is_a?(Array)
-
-    #   node(node_or_edge).include?
-    # end
 
     # Adds a new node to graph, unless it already exists
     # Connects it to another node, if a target named :to is present
