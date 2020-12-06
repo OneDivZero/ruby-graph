@@ -365,4 +365,14 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
       end
     end
   end
+
+  describe 'Circles in graph' do
+    it 'detects if a node has a circle with itself' do
+      build_graph(with: %i[a])
+
+      @graph.connect(:a, :a)
+
+      assert @graph.circle?(:a)
+    end
+  end
 end

@@ -26,6 +26,13 @@ guard :minitest do
   watch(%r{^test/(.*)\/(.*)_test\.rb$})
   watch(%r{^test/(.*)_test\.rb$})
 
+  # Changes in this files should trigger all tests on base-class:
+  # TODO: Fix regex when module-definition is finally #1
+  #watch(%r{^lib/ruby_graph/*\.rb$})        { |m| "test/ruby_graph/graph_test.rb" }
+  watch(%r{^lib/ruby_graph/accessors.rb})   { |m| "test/ruby_graph/graph_test.rb" }
+  watch(%r{^lib/ruby_graph/features.rb})   { |m| "test/ruby_graph/graph_test.rb" }
+  watch(%r{^lib/ruby_graph/operations.rb})   { |m| "test/ruby_graph/graph_test.rb" }
+
   # with Minitest::Spec
   # watch(%r{^spec/(.*)_spec\.rb$})
   # watch(%r{^lib/(.+)\.rb$})         { |m| "spec/#{m[1]}_spec.rb" }

@@ -43,6 +43,12 @@ module RubyGraph
       neighbors(node).include?(other_node)
     end
 
+    # Detects if a node is connected with itself
+    # TODO: Missing arg: :target, requires detection of a circle between :origin and :target
+    def circle?(origin)
+      origin = key_for(origin)
 
+      return true if neighbors(origin).include?(origin)
+    end
   end
 end
