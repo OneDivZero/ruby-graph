@@ -3,6 +3,7 @@
 module RubyGraph
   class Graph
     class InvalidNode < StandardError; end
+
     class InvalidEdge < StandardError; end
     # class InvalidSet < StandardError; end
 
@@ -17,7 +18,7 @@ module RubyGraph
       @name = name || object_id
       @store = {}
 
-      with.each { |name| add(name) } if with.any?
+      with.each { |node_key| add(node_key) } if with.any?
     end
 
     # Returns true if graph has no nodes
@@ -33,14 +34,16 @@ module RubyGraph
     # Returns the node-definition
     # Currently the same as :neighbors
     def node(name)
-      @store[key_for(name)]
+      #@store[key_for(name)]
+      neighbors(name)
     end
 
+    # Returns all added nodes
     def nodes
       @store.keys
     end
 
-    # Returns all edges
+    # Returns all defined (implicit) edges
     def edges
       result = []
       return result if empty?
@@ -59,7 +62,7 @@ module RubyGraph
       @store[key_for(name)]
     end
 
-    # Evaluates if two nodes are directly connected (via one edge)
+    # Evaluates if two nodes are directly connected (via an implicit edge)
     def adjacent?(source, target)
       source = key_for(source)
       target = key_for(target)
@@ -69,14 +72,10 @@ module RubyGraph
 
     # Evaluates if given node-list is known
     def known?(*nodes)
-      # raise InvalidSet unless nodes.is_a?(Array)
-
       nodes.reduce(true) { |result, name| result && node?(name) }
     end
 
     # Evaluates if a given node is incident with a given edge (a pair of two nodes)
-    # ein Knoten ist inzident mit einer Kante: der Knoten liegt an wenigstens einem Ende der Kante
-    # eine Kante ist inzident mit einem Knoten: die Kante hat den Knoten an einem ihrer Enden
     # An incidence is given, if and only if the given :node exists and *all defined :nodes* from edge-definition exists
     # One :node is incident with an :edge, if the :node has a direct connection to another :node specified by :edge
     # One :edge is incident with a :node, if a :node specified by :edge has a direct connection to given :node
@@ -87,12 +86,11 @@ module RubyGraph
       raise InvalidEdge unless valid_edge?(edge)
 
       return false unless node?(node) # Not possible if node is unknown
-      #return false unless edge.include?(node)
-      return false unless known?(*edge) # Not possible, if edge-definition does not contain specified nodes
+      return false unless known?(*edge) # Not possible, if edge-definition does not contain known nodes
 
       #other_node = edge.without(node) # FIXME: undefined method `without' for [:a, :b]:Array" #ActiveSupport #1
       edge.delete(node)
-      other_node = edge.first
+      other_node = edge.first if edge.one? # Must be after calling delete on edge
 
       neighbors(node).include?(other_node)
     end
@@ -133,28 +131,32 @@ module RubyGraph
       true
     end
 
+    # Adds a node with given name to internal store. Converts the name upfront to a valid symbol.
     private def add_node(name)
       @store[key_for(name)] = []
     end
 
     private def key_for(name)
       raise InvalidNode unless valid_key?(name)
-      # NOTE: DNW: cause a name with an integer-value like '0221' is converted upfront by ruby #1
-      # And there is no way to detect this implicit conversion to an octal-representation. Thus: Remove that feature
-      #name.is_a?(Integer) ? ('0%o' % name).to_sym : name.to_s.to_sym
+
       name.to_s.to_sym
     end
 
+    # Ensures if a given name is strictly a [Symbol, String, Integer]
     private def valid_key?(name)
       name.is_a?(Symbol) || name.is_a?(String) || name.is_a?(Integer)
     end
 
-    private def valid_edge?(edge)
-      edge.is_a?(Array) && edge.size.eql?(2) && symbolized?(edge)
+    # Ensures if a given edge-definition is valid (valid: if it's a symbolized two-element-array)
+    private def valid_edge_definition?(edge, symbolized: true)
+      proof = edge.is_a?(Array) && edge.size.eql?(2)
+      proof &= symbolized?(edge) if symbolized
+      proof
     end
 
+    # Transforms every designator of an edge into a valid symbolized designator
     private def keyify(edge)
-      raise InvalidEdge unless valid_edge?(edge)
+      raise InvalidEdge unless valid_edge_definition?(edge, symbolized: false)
 
       edge.map { |name| key_for(name) }
     end
