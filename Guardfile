@@ -21,6 +21,7 @@ guard :minitest do
   watch(%r{^lib/(.*/)?([^/]+)\.rb$})     { |m| "test/#{m[1]}test_#{m[2]}.rb" }
   watch(%r{^test/test_helper\.rb$})      { 'test' }
 
+  # Added for testing this gem:
   watch(%r{^lib/(.+)\.rb$})              { |m| "test/#{m[1]}_test.rb" }
   watch(%r{^test/(.*)\/(.*)_test\.rb$})
   watch(%r{^test/(.*)_test\.rb$})

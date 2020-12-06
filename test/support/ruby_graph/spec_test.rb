@@ -4,6 +4,7 @@ module RubyGraph
   class SpecTest < Minitest::Spec
     include RubyGraph::TestMethods
 
+    # rubocop:disable Style/Alias
     alias :assert_raise :assert_raises
     alias :assert_not_empty :refute_empty
     alias :assert_not_equal :refute_equal
@@ -19,5 +20,6 @@ module RubyGraph
     alias :assert_not_respond_to :refute_respond_to
     alias :assert_not_same :refute_same
     alias :assert_not :refute
+    # rubocop:enable Style/Alias
   end
 end

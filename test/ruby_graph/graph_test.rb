@@ -64,6 +64,7 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
       end
     end
 
+    # rubocop:disable Style/NumericLiteralPrefix
     it 'does not accept a number with an leading zero' do
       build_graph
 
@@ -77,10 +78,11 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
 
       @graph.add(0221)
 
-      expected = 0221.to_s.to_sym
+      # expected = 0221.to_s.to_sym
 
       assert @graph.store.key?(:'145')
     end
+    # rubocop:enable Style/NumericLiteralPrefix
 
     it 'adds a node and connects it with an existing node' do
       build_graph
@@ -347,7 +349,7 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
     it 'fails for incident?' do
       build_graph
 
-      assert_raises(RubyGraph::Graph::InvalidNode) { @graph.incident?([], [:a, :b]) }
+      assert_raises(RubyGraph::Graph::InvalidNode) { @graph.incident?([], %i[a b]) }
     end
   end
 

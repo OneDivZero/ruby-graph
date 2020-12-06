@@ -1,5 +1,6 @@
 module Minitest
   class AdvancedSpec < Minitest::Spec
+    # rubocop:disable Style/Alias
     alias :assert_raise :assert_raises
     alias :assert_not_empty :refute_empty
     alias :assert_not_equal :refute_equal
@@ -15,5 +16,6 @@ module Minitest
     alias :assert_not_respond_to :refute_respond_to
     alias :assert_not_same :refute_same
     alias :assert_not :refute
+    # rubocop:enable Style/Alias
   end
 end
