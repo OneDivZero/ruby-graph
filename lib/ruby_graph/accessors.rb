@@ -1,9 +1,8 @@
 module RubyGraph
   module Accessors
-    # Returns a node-definition for given name (currently the same as :neighbors) #1
+    # Returns a node-definition for given name (currently the 'same' as :neighbors but nil if unknown) #1
     def node(name)
-      #@store[key_for(name)]
-      neighbors(name)
+      @store[key_for(name)]
     end
 
     # Returns all added nodes
@@ -27,7 +26,10 @@ module RubyGraph
 
     # Returns all neighbors of a node
     def neighbors(name)
-      @store[key_for(name)]
+      @store[key_for(name)] || []
     end
+
+    # TODO: Return node if strategy.eql?(:default)
+    def visit(node, strategy: :default); end
   end
 end
