@@ -23,10 +23,13 @@ module RubyGraph
       neighbors(source).include?(target)
     end
 
-    # Evaluates if a given node is incident with a given edge (a pair of two nodes)
-    # An incidence is given, if and only if the given :node exists and *all defined :nodes* from edge-definition exists
-    # One :node is incident with an :edge, if the :node has a direct connection to another :node specified by :edge
-    # One :edge is incident with a :node, if a :node specified by :edge has a direct connection to given :node
+    # Evaluates if a given node is incident with a given edge (pair of two nodes) [https://en.wikipedia.org/wiki/Incidence_(graph)]
+    # NOTE: an edge is defined by an incidence-relation, having max. a pair of two nodes: e=(vx,vy) => |e| <= 2 / implies vx==vy
+    # DEF: a vertex is incident to an edge if the vertex is one of the two vertices the edge connects.
+    # An incidence is given, iff the given :node exists and the other node from edge-definition exists too
+    # An :edge is incident with a :node, if a :node specified by :edge has a direct connection to another :node
+    # An :edge is incident with a :node, if a :node specified by :edge has a direct connection to the same given :node
+    # In lastly case: another :node is equals :node => (v1 == v1)
     def incident?(node, edge)
       node = key_for(node)
       edge = keyify(edge)
@@ -45,10 +48,11 @@ module RubyGraph
 
     # Detects if a node is connected with itself
     # TODO: Missing arg: :target, requires detection of a circle between :origin and :target
-    def circle?(origin)
-      origin = key_for(origin)
+    def circled?(origin)
+      true if neighbors(origin).include?(key_for(origin))
+    end
 
-      return true if neighbors(origin).include?(origin)
+    def circles?
     end
   end
 end

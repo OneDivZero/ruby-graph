@@ -372,7 +372,12 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
 
       @graph.connect(:a, :a)
 
-      assert @graph.circle?(:a)
+      assert @graph.circled?(:a)
+
+      # @graph.add(:b)
+      # assert_not @graph.circle?(:a)
+
+      # @graph.connect(:a, :a)
     end
   end
 end
