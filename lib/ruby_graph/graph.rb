@@ -1,3 +1,4 @@
+require 'ruby_graph/abilities'
 require 'ruby_graph/accessors'
 require 'ruby_graph/operations'
 require 'ruby_graph/features'
@@ -6,6 +7,7 @@ require 'ruby_graph/features'
 # As of yet, it only supports undirected graphs and has a very simple, cost-inefficient underlying datastructure.
 module RubyGraph
   class Graph
+    include RubyGraph::Abilities
     include RubyGraph::Accessors
     include RubyGraph::Operations
     include RubyGraph::Features
@@ -26,7 +28,8 @@ module RubyGraph
       @name = name || object_id
       @store = {}
 
-      with.each { |node_key| add(node_key) } if with.any?
+      add_node(with) if with.is_a?(Symbol) #DOCME: only allowed for symbols #1
+      with.each { |node_key| add(node_key) } if with.is_a?(Array) && with.any?
     end
 
     private def key_for(name)

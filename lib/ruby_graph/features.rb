@@ -1,10 +1,5 @@
 module RubyGraph
   module Features
-    # Returns true if graph has no nodes
-    def empty?
-      @store.empty?
-    end
-
     # Evaluates if a node is known
     def node?(name)
       @store.key?(key_for(name))
@@ -22,6 +17,9 @@ module RubyGraph
 
       neighbors(source).include?(target)
     end
+
+    # TODO: NOT an alias for connection between nodes, cause this must be a generic graph-method
+    def connected?(); end
 
     # Evaluates if a given node is incident with a given edge (pair of two nodes) [https://en.wikipedia.org/wiki/Incidence_(graph)]
     # NOTE: an edge is defined by an incidence-relation, having max. a pair of two nodes: e=(vx,vy) => |e| <= 2 / implies vx==vy
@@ -46,13 +44,24 @@ module RubyGraph
       neighbors(node).include?(other_node)
     end
 
-    # Detects if a node is connected with itself
-    # TODO: Missing arg: :target, requires detection of a circle between :origin and :target
-    def circled?(origin)
-      true if neighbors(origin).include?(key_for(origin))
+    # Detects if a :node is connected with itself or any :target is connected to :node by any egde-definition
+    def circle?(origin, target = nil)0
+      return true if self_circled?(origin) # Break if at least a circle exists with itself
+      return false if target.nil?
+
+      neighbors(key_for(target)).each do |node|
+        # connected?(node, origin)
+
+        #return if adjacent?(node, origin)
+      end
     end
 
-    def circles?
+    def circled?
+      # Vistit all nodes for detecing a circle
+    end
+
+    private def self_circled?(node)
+      neighbors(node).include?(key_for(node))
     end
   end
 end
