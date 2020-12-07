@@ -7,7 +7,7 @@ module RubyGraph
 
     # Evaluates if given node-list is known
     def known?(*nodes)
-      nodes.reduce(true) { |result, name| result && node?(name) }
+      nodes.reduce(true) { |result, name| result && name.present? && node?(name) }
     end
 
     # Evaluates if two nodes are directly connected (via an implicit edge)
@@ -44,15 +44,15 @@ module RubyGraph
       neighbors(node).include?(other_node)
     end
 
-    # Detects if a :node is connected with itself or any :target is connected to :node by any egde-definition
-    def circle?(origin, target = nil)0
+    # Detects if a :node is connected with itself or any if :target is connected to :node by any egde-definition
+    def circle?(origin, target = nil)
+      return false unless known?(origin)
       return true if self_circled?(origin) # Break if at least a circle exists with itself
-      return false if target.nil?
+      return false if target.nil? # If targit is nil, then there is no circle
+      return false unless known?(target)
 
       neighbors(key_for(target)).each do |node|
-        # connected?(node, origin)
-
-        #return if adjacent?(node, origin)
+        return true if adjacent?(node, origin)
       end
     end
 

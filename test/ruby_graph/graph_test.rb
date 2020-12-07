@@ -368,16 +368,46 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
 
   describe 'Circles in graph' do
     it 'detects if a node has a circle with itself' do
+      build_graph(with: :a)
+
+      @graph.connect(:a, :a)
+
+      assert @graph.circle?(:a)
+    end
+
+    it 'detects if a node has a circle with another node' do
+      build_graph(with: %i[a b])
+
+      assert @graph.node?(:a)
+      assert @graph.node?(:b)
+
+      assert @graph.connect(:a, :b)
+      assert @graph.connect(:b, :a)
+
+      assert @graph.circle?(:a, :b)
+    end
+
+    it 'detects if a node has *not* a circle with another node (other node is unknown or nil)' do
+      build_graph(with: %i[a b])
+
+      assert_not @graph.circle?(:a)
+      assert_not @graph.circle?(:b)
+      assert_not @graph.circle?(:a, nil)
+      assert_not @graph.circle?(:a, :unknown)
+    end
+
+    it 'detects if a graph is circled? ' do
+      build_graph(with: %i[a])
+
+      assert_not @graph.circle?(:a)
+    end
+
+    it 'detects if a graph is circled? (any node to any other node)' do
       build_graph(with: %i[a])
 
       @graph.connect(:a, :a)
 
-      assert @graph.circled?(:a)
-
-      # @graph.add(:b)
-      # assert_not @graph.circle?(:a)
-
-      # @graph.connect(:a, :a)
+      #assert @graph.circled?(:a)
     end
   end
 end
