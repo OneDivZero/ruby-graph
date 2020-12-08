@@ -11,6 +11,7 @@ module RubyGraph
     end
 
     # Evaluates if two nodes are directly connected (via an implicit edge)
+    # ∃e ∈ E : γ(e) = {a, b}
     def adjacent?(source, target)
       source = key_for(source)
       target = key_for(target)
@@ -36,15 +37,13 @@ module RubyGraph
 
       return false unless node?(node) # Not possible if node is unknown
       return false unless known?(*edge) # Not possible, if edge-definition does not contain known nodes
+      return false unless edge.include?(node) # Not possible, if node is not part of edge-definition
 
-      #other_node = edge.without(node) # FIXME: undefined method `without' for [:a, :b]:Array" #ActiveSupport #1
-      edge.delete(node)
-      other_node = edge.first if edge.one? # Must be after calling delete on edge
-
-      neighbors(node).include?(other_node)
+      other_node = edge.dup.without(node)
+      neighbors(node).include?(*other_node)
     end
 
-    # Detects if a :node is connected with itself or any if :target is connected to :node by any egde-definition
+    # Detects if a :node is connected with itself or any other if :target is connected to :node by any egde-definition
     def circle?(origin, target = nil)
       return false unless known?(origin)
       return true if self_circled?(origin) # Break if at least a circle exists with itself
@@ -56,9 +55,20 @@ module RubyGraph
       end
     end
 
-    def circled?
-      # Vistit all nodes for detecing a circle
-    end
+    # def circled?
+    #   # Vistit all nodes for detecing a circle
+    #   result = true
+    #   nodes.each do |node, neighbors|
+    #     return true if adjacent?(node, node)
+    #     # true if niefhbors node are reachable to node with a back-reference
+    #     # return true if neighbors
+    #     neighbors(neighbors).each do |a_neighbor|
+    #       return true if adjacent?(a_neighbor, node)
+    #     end
+    #   end
+
+    #   false
+    # end
 
     private def self_circled?(node)
       neighbors(node).include?(key_for(node))

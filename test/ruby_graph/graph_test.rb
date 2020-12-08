@@ -195,7 +195,8 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
 
       @graph.connect(:a, :b)
 
-      assert @graph.incident?(:a, %i[a b])
+      edge = %i[a b]
+      assert @graph.incident?(:a, edge)
     end
 
     it 'fails if the node is not incident' do
@@ -396,18 +397,34 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
       assert_not @graph.circle?(:a, :unknown)
     end
 
-    it 'detects if a graph is circled? ' do
-      build_graph(with: %i[a])
+    # it 'detects if a graph is circled? ' do
+    #   build_graph(with: %i[a b c d])
 
-      assert_not @graph.circle?(:a)
-    end
+    #   assert @graph.connect(:a, :b)
+    #   assert @graph.connect(:b, :c)
+    #   assert @graph.connect(:c, :a)
+    #   #assert @graph.connect(:c, :d)
 
-    it 'detects if a graph is circled? (any node to any other node)' do
-      build_graph(with: %i[a])
+    #   assert @graph.circled?
+    # end
 
-      @graph.connect(:a, :a)
+    # it 'detects if a graph *not* is circled? ' do
+    #   build_graph(with: %i[a b c d])
 
-      #assert @graph.circled?(:a)
-    end
+    #   assert @graph.connect(:a, :b)
+    #   assert @graph.connect(:b, :c)
+    #   assert @graph.connect(:c, :d)
+
+    #   assert_not @graph.circled?
+    # end
+
+
+    # it 'detects if a graph is circled? (any node to any other node)' do
+    #   build_graph(with: %i[a])
+
+    #   @graph.connect(:a, :a)
+
+    #   #assert @graph.circled?(:a)
+    # end
   end
 end
