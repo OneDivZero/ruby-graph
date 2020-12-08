@@ -2,7 +2,7 @@ module RubyGraph
   module Operations
     # Adds a new node to graph, unless it already exists
     # Connects it to another node, if a target named :to is present
-    # TODO: DOCME: integers with a leading zero like phone-numbers will always be converted by ruby, e.g. 0221 => 145
+    # DOCME: integers with a leading zero like phone-numbers will always be converted by ruby, e.g. 0221 => 145
     def add(name, to: nil)
       add_node(name) unless node?(name)
 

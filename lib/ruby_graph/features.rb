@@ -10,17 +10,19 @@ module RubyGraph
       nodes.reduce(true) { |result, name| result && name.present? && node?(name) }
     end
 
+    # TODO: NOT an alias for connection between nodes, cause this must be a generic graph-method
+    def connected?(); end
+
     # Evaluates if two nodes are directly connected (via an implicit edge)
     # ∃e ∈ E : γ(e) = {a, b}
     def adjacent?(source, target)
       source = key_for(source)
       target = key_for(target)
 
+      return false unless known?(source, target)
+
       neighbors(source).include?(target)
     end
-
-    # TODO: NOT an alias for connection between nodes, cause this must be a generic graph-method
-    def connected?(); end
 
     # Evaluates if a given node is incident with a given edge (pair of two nodes) [https://en.wikipedia.org/wiki/Incidence_(graph)]
     # NOTE: an edge is defined by an incidence-relation, having max. a pair of two nodes: e=(vx,vy) => |e| <= 2 / implies vx==vy
@@ -43,17 +45,29 @@ module RubyGraph
       neighbors(node).include?(*other_node)
     end
 
-    # Detects if a :node is connected with itself or any other if :target is connected to :node by any egde-definition
-    def circle?(origin, target = nil)
-      return false unless known?(origin)
-      return true if self_circled?(origin) # Break if at least a circle exists with itself
-      return false if target.nil? # If targit is nil, then there is no circle
-      return false unless known?(target)
+    # An edge is called a loop, if this edge is only incident to one node (e.g. edge = {a, a})
+    def loop?(edge)
+      edge = keyify(edge)
 
-      neighbors(key_for(target)).each do |node|
-        return true if adjacent?(node, origin)
-      end
+      raise InvalidEdge unless valid_edge_definition?(edge)
+
+      return false unless known?(*edge)
+
+      edge.first.eql?(edge.last)
     end
+
+    # NOTE: Disabled for now, cause we need to implement other methods first
+    # Detects if a :node is connected with itself or any other if :target is connected to :node by any egde-definition
+    # def circle?(origin, target = nil)
+    #   return false unless known?(origin)
+    #   return true if self_circled?(origin) # Break if at least a circle exists with itself
+    #   return false if target.nil? # If targit is nil, then there is no circle
+    #   return false unless known?(target)
+
+    #   neighbors(key_for(target)).each do |node|
+    #     return true if adjacent?(node, origin)
+    #   end
+    # end
 
     # def circled?
     #   # Vistit all nodes for detecing a circle
@@ -70,8 +84,8 @@ module RubyGraph
     #   false
     # end
 
-    private def self_circled?(node)
-      neighbors(node).include?(key_for(node))
-    end
+    # private def self_circled?(node)
+    #   neighbors(node).include?(key_for(node))
+    # end
   end
 end

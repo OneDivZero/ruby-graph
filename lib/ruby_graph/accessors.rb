@@ -13,7 +13,7 @@ module RubyGraph
     # Returns all defined (implicit) edges
     def edges
       result = []
-      return result if empty?
+      return result if empty? # No nodes in @store present
 
       @store.each do |node, neighbors|
         neighbors.each do |neighbor|
