@@ -81,6 +81,9 @@ Style/AccessModifierDeclarations:
 Style/AndOr:
   EnforcedStyle: conditionals
 
+Style/AsciiComments:
+  Enabled: false
+
 Style/BlockDelimiters:
   Exclude:
     - 'test/factories/*.rb'
