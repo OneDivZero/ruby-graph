@@ -22,11 +22,13 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
       assert_equal :custom, @graph.name
     end
 
+    # rubocop:disable Minitest/AssertEmpty
     it 'is an empty graph by default' do
       build_graph
 
       assert @graph.empty?
     end
+    # rubocop:enable Minitest/AssertEmpty
 
     it 'builds a graph with an initial defined setting of nodes' do
       nodes = %i[a b c]
