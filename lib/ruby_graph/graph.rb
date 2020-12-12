@@ -1,4 +1,4 @@
-require 'active_support/core_ext/array/access.rb'
+require 'active_support/core_ext/array/access'
 require 'ruby_graph/abilities'
 require 'ruby_graph/accessors'
 require 'ruby_graph/operations'

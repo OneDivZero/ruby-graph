@@ -527,7 +527,6 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
   #   #   assert_not @graph.circled?
   #   # end
 
-
   #   # it 'detects if a graph is circled? (any node to any other node)' do
   #   #   build_graph(with: %i[a])
 

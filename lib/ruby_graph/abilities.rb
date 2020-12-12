@@ -19,6 +19,7 @@ module RubyGraph
       # proof &= edges.sort.reduce(proof) { |result, edge| result && !edges.dup.without(edge).include?(edge) }
 
       proof &= proof_on_no_parallels?
+      proof
     end
 
     private def proof_on_no_loops?

@@ -24,8 +24,10 @@ module RubyGraph
       neighbors(source).include?(target)
     end
 
-    # Evaluates if a given node is incident with a given edge (pair of two nodes) [https://en.wikipedia.org/wiki/Incidence_(graph)]
-    # NOTE: an edge is defined by an incidence-relation, having max. a pair of two nodes: e=(vx,vy) => |e| <= 2 / implies vx==vy
+    # Evaluates if a given node is incident with a given edge (pair of two nodes)
+    # [https://en.wikipedia.org/wiki/Incidence_(graph)]
+    # NOTE: an edge is defined by an incidence-relation, having max. a pair of two nodes:
+    # e=(vx,vy) => |e| <= 2 / implies vx==vy
     # DEF: a vertex is incident to an edge if the vertex is one of the two vertices the edge connects.
     # An incidence is given, iff the given :node exists and the other node from edge-definition exists too
     # An :edge is incident with a :node, if a :node specified by :edge has a direct connection to another :node
