@@ -45,7 +45,8 @@ module RubyGraph
       neighbors(node).include?(*other_node)
     end
 
-    # An edge is called a loop, if this edge is only incident to one node (e.g. edge = {a, a})
+    # An edge is called a loop, if this edge is only incident to one node
+    # => edge = {a, a}
     def loop?(edge)
       edge = keyify(edge)
 
@@ -54,6 +55,20 @@ module RubyGraph
       return false unless known?(*edge)
 
       edge.first.eql?(edge.last)
+    end
+
+    # Two edges are parallel, if both are incident to the same node
+    # => edge_a = {a, b} | edge_b = {b, a} | edge_a and edge_b have the same definition
+    def parallel?(edge_a, edge_b)
+      edge_a = keyify(edge_a)
+      edge_b = keyify(edge_b)
+
+      raise InvalidEdge unless valid_edge_definition?(edge_a)
+      raise InvalidEdge unless valid_edge_definition?(edge_b)
+
+      return false unless known?(*edge_a) && known?(*edge_b)
+
+      edge_a.sort.eql?(edge_b.sort)
     end
 
     # NOTE: Disabled for now, cause we need to implement other methods first

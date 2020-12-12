@@ -246,7 +246,7 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
       assert_equal [%i[a a]], @graph.edges
     end
 
-    describe 'Loops' do
+    describe 'Loop' do
       it 'evaluates if an edge is a loop' do
         build_graph(with: %i[a])
         edge = %i[a a]
@@ -266,6 +266,91 @@ class RubyGraph::GraphTest < RubyGraph::SpecTest
         edge = %i[a c]
 
         assert_not @graph.loop?(edge)
+      end
+    end
+
+    describe 'Parallel' do
+      it 'evaluates if two edges are parallel' do
+        build_graph(with: %i[a b])
+
+        edge_a = %i[a b]
+        edge_b = %i[b a]
+
+        assert @graph.parallel?(edge_a, edge_b)
+      end
+
+      it 'evaluates if two edges are not parallel' do
+        build_graph(with: %i[a b c])
+
+        edge_a = %i[a b]
+        edge_b = %i[b c]
+
+        assert_not @graph.parallel?(edge_a, edge_b)
+      end
+
+      it 'evaluates if two edges are not parallel when nodes are not known' do
+        build_graph(with: %i[a])
+
+        edge_a = %i[a b]
+        edge_b = %i[b a]
+
+        assert_not @graph.parallel?(edge_a, edge_b)
+      end
+    end
+
+    describe 'Simple (no loops and no parallel edges)' do
+      it 'evaluates if a graph is simple if no nodes are present' do
+        build_graph
+
+        assert @graph.simple?
+      end
+
+      it 'evaluates if a graph is simple if no edges are present' do
+        build_graph(with: %i[a])
+
+        assert @graph.simple?
+      end
+
+      it 'evaluates if a graph is simple if no loops are present' do
+        build_graph(with: %i[a b c d])
+
+        @graph.connect(:a, :b)
+        @graph.connect(:b, :c)
+
+        assert @graph.simple?
+      end
+
+      it 'evaluates if a graph is simple if no parallel edges are present' do
+        build_graph(with: %i[a b c d])
+
+        @graph.connect(:a, :b)
+        @graph.connect(:c, :b)
+
+        assert @graph.simple?
+      end
+
+      it 'evaluates if a graph is NOT simple if loops are present?' do
+        build_graph(with: %i[a b c d])
+
+        @graph.connect(:a, :b)
+        @graph.connect(:b, :b)
+        @graph.connect(:c, :b)
+
+        assert_not @graph.simple?
+      end
+
+      # TODO: This fest failes, cause :edges returns [[:a, :b], [:b, :c]] for this definition #1
+      # As of yet this graph does not support parallel-edge-definitions in his internal datastructure
+      it 'evaluates if a graph is NOT simple if parallel edges are present?' do
+        skip
+
+        build_graph(with: %i[a b c d])
+
+        @graph.connect(:a, :b)
+        @graph.connect(:b, :c)
+        @graph.connect(:c, :b)
+
+        assert_not @graph.simple?
       end
     end
   end
