@@ -1,7 +1,9 @@
 require 'ruby_graph/version'
 require 'ruby_graph/graph'
+# require 'ruby_graph/features'
 
 module RubyGraph
-  class Error < StandardError; end
-  # Your code goes here...
+  def self.build(name = nil, with: [])
+    Graph.build(name: name, with: with)
+  end
 end
